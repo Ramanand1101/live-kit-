@@ -14,6 +14,10 @@ const {
   PORT = 3001,
 } = process.env;
 
+app.get("/",(req,res)=>{
+    res.send("Live-kit server working")
+})
+
 app.post('/get-token', async (req, res) => {
   const { identity, roomName, isPublisher } = req.body;
 
