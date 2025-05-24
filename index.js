@@ -7,15 +7,17 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
+// CORS Middleware
 app.use(cors({
-  origin: ["http://localhost:3000", "https://your-frontend.vercel.app"],
+  origin: [
+    "http://localhost:3000",
+  ],
   methods: ["GET", "POST"],
   credentials: true,
 }));
 app.use(express.json());
-//done
-// Environment variables
+
+// Environment Variables
 const {
   LIVEKIT_API_KEY,
   LIVEKIT_API_SECRET,
@@ -23,35 +25,37 @@ const {
   PORT = 3001,
 } = process.env;
 
-// Root route
+// Root Endpoint
 app.get("/", (req, res) => {
   res.send("✅ LiveKit token server running!");
 });
 
-// Token route
+// Token Generation Endpoint
 app.post('/get-token', async (req, res) => {
-  const { identity, roomName, isPublisher } = req.body;
+  const { identity, roomName, isPublisher = true } = req.body;
 
   if (!identity || !roomName) {
     return res.status(400).json({ error: 'Missing identity or roomName' });
   }
 
-  try {
-    const at = new AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET, {
-      identity,
-    });
+  if (!LIVEKIT_API_KEY || !LIVEKIT_API_SECRET || !LIVEKIT_URL) {
+    return res.status(500).json({ error: 'Server misconfiguration: missing API credentials' });
+  }
 
-    at.addGrant({
+  try {
+    const token = new AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET, { identity });
+
+    token.addGrant({
       room: roomName,
       roomJoin: true,
       canPublish: !!isPublisher,
       canSubscribe: true,
     });
 
-    const token = await at.toJwt();
+    const jwt = await token.toJwt();
 
-    console.log("✅ Token generated for", identity, "in room", roomName);
-    res.json({ token, wsUrl: LIVEKIT_URL });
+    console.log(`✅ Token generated for ${identity} in room "${roomName}"`);
+    res.json({ token: jwt, wsUrl: LIVEKIT_URL });
 
   } catch (err) {
     console.error('❌ Token generation failed:', err);
@@ -59,7 +63,7 @@ app.post('/get-token', async (req, res) => {
   }
 });
 
-// Start server
+// Start Server
 app.listen(PORT, () => {
-  console.log(`🚀 Token server listening at http://localhost:${PORT}`);
+  console.log(`🚀 Token server running at http://localhost:${PORT}`);
 });
