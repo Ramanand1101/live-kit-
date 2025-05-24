@@ -5,7 +5,13 @@ const { AccessToken } = require('livekit-server-sdk');
 
 dotenv.config();
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://live-kit-frontend.vercel.app"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 const {
