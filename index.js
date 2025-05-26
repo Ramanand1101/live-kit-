@@ -9,7 +9,7 @@ const app = express();
 
 // CORS Middleware
 app.use(cors({
-  origin: ["http://localhost:3000","https://meet.lcmgo.com","https://live-kit-frontend-xzu2.vercel.app"
+  origin: ["http://localhost:3000","https://meet.lcmgo.com","https://live-kit-frontend.vercel.app"
   ],
   methods: ["GET", "POST"],
   credentials: true,
