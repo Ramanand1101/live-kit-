@@ -21,7 +21,8 @@ app.use(cors({
     "http://localhost:3000",
     "https://meet.lcmgo.com",
     "https://live-kit-frontend.vercel.app",
-    "https://live-kit-frontend.onrender.com"
+    "https://live-kit-frontend.onrender.com",
+    "https://live-kit-frontend-tfdm.vercel.app"
   ],
   methods: ["GET", "POST"],
   credentials: true,
